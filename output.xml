@@ -1,0 +1,400 @@
+<ns0:GenevaLoader xmlns:ns0="http://www.advent.com/SchemaRevLevel758/Geneva" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.advent.com/SchemaRevLevel758/Geneva masterschema.xsd">
+<ns0:TransactionRecords>
+<ns0:Sell_New>
+<ns0:Portfolio>12307</ns0:Portfolio>
+<ns0:LocationAccount>JPM</ns0:LocationAccount>
+<ns0:Strategy>Default</ns0:Strategy>
+<ns0:Investment>BloombergId=BBG000PH54R1</ns0:Investment>
+<ns0:EventDate>2016-12-23T00:00:00</ns0:EventDate>
+<ns0:SettleDate>2016-12-29T00:00:00</ns0:SettleDate>
+<ns0:ActualSettleDate>2016-12-29T00:00:00</ns0:ActualSettleDate>
+<ns0:Comments>Common Stock</ns0:Comments>
+<ns0:UserDefDate1 />
+<ns0:UserDefDate2 />
+<ns0:UserTranId1>5797</ns0:UserTranId1>
+<ns0:UserTranId2 />
+<ns0:KeyValue>5797</ns0:KeyValue>
+<ns0:InvestmentClosingRule />
+<ns0:SecondaryInvestmentClosingRule />
+<ns0:Quantity>2142000.0</ns0:Quantity>
+<ns0:Price>7.0832</ns0:Price>
+<ns0:NetCounterAmount>CALC</ns0:NetCounterAmount>
+<ns0:SwapPrice />
+<ns0:TotCommission>30344.43</ns0:TotCommission>
+<ns0:NotionalAmount />
+<ns0:SecFeeAmount />
+<ns0:NetTradeFlag />
+<ns0:AccrueCommissionFlag />
+<ns0:PriceDenomination>HKD</ns0:PriceDenomination>
+<ns0:CounterFXDenomination />
+<ns0:CounterInvestment>HKD</ns0:CounterInvestment>
+<ns0:CounterTDateFx />
+<ns0:CounterSDateFx />
+<ns0:AccruedInterest>CALC</ns0:AccruedInterest>
+<ns0:Broker>CICF-EQ</ns0:Broker>
+<ns0:ContractExpirationDate />
+<ns0:OriginalFace />
+<ns0:PerShareAmount />
+<ns0:Trader />
+<ns0:WashSalesNonCovered />
+<ns0:CreditFacilitySettlementType />
+<ns0:GenericInv />
+<ns0:FinancingInv />
+<ns0:tradeFX>1.0</ns0:tradeFX>
+<ns0:NetInvestmentAmount>CALC</ns0:NetInvestmentAmount>
+<ns0:InvestmentAccruedInterest />
+<ns0:GlobalAmount />
+<ns0:Yield />
+<ns0:AccountingView />
+<ns0:CloseLeg />
+<ns0:EventDesc />
+<ns0:Analyst />
+<ns0:Manager />
+<ns0:FundStructure>CALC</ns0:FundStructure>
+<ns0:HeldToMaturity>0</ns0:HeldToMaturity>
+<ns0:UserDefField1 />
+<ns0:TradeFlatFlag />
+<ns0:SweepOnSettle />
+<ns0:ReceiveFinancing />
+<ns0:FinanceAIandPayFullCoupon />
+<ns0:DirtyPriced />
+<ns0:DelayedCompensation />
+<ns0:SwapPriceEnabled />
+<ns0:SettlementDays />
+<ns0:UseAmortPriceList />
+<ns0:TradeSource>AIM</ns0:TradeSource>
+<ns0:IntTradeExclInByPassStrat />
+<ns0:UnsupervisedFlag />
+<ns0:UserDefField1 />
+<ns0:TradesAsType />
+<ns0:CashSource />
+<ns0:ExecutionVenue />
+<ns0:ExecutionVenueType />
+<ns0:USIIssuer />
+<ns0:BlockUSIIssuer />
+<ns0:USI />
+<ns0:BlockUSI />
+<ns0:BlockSEFTradeID />
+<ns0:ExternalSystemReferenceID />
+<ns0:TradeExpenses>
+<ns0:ExpenseAmt>15173.0</ns0:ExpenseAmt>
+<ns0:ExpenseCode>Stamp_Duty</ns0:ExpenseCode>
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+<ns0:ExpenseNumber>6</ns0:ExpenseNumber>
+</ns0:TradeExpenses>
+<ns0:TradeExpenses>
+<ns0:ExpenseAmt>758.61</ns0:ExpenseAmt>
+<ns0:ExpenseCode>Exchange_Fee</ns0:ExpenseCode>
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+<ns0:ExpenseNumber>3</ns0:ExpenseNumber>
+</ns0:TradeExpenses>
+<ns0:TradeExpenses>
+<ns0:ExpenseAmt>409.65</ns0:ExpenseAmt>
+<ns0:ExpenseCode>Transaction_Levy</ns0:ExpenseCode>
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+<ns0:ExpenseNumber>7</ns0:ExpenseNumber>
+</ns0:TradeExpenses>
+<ns0:InvestmentClosingList>
+<ns0:LotId />
+<ns0:ReliefQuantity />
+</ns0:InvestmentClosingList>
+<ns0:NonCapExpenses>
+<ns0:NonCapNumber />
+<ns0:NonCapCurrency />
+<ns0:LocationAccount />
+<ns0:NonCapExpenseCode />
+<ns0:NonCapLiabilityCode />
+<ns0:NonCapPaymentType />
+<ns0:NonCapSpecifyDate />
+<ns0:NonCapAmount />
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+</ns0:NonCapExpenses>
+<ns0:ProcessStatuses>
+<ns0:ProcessCode />
+<ns0:StatusCode />
+</ns0:ProcessStatuses>
+<ns0:TransIncomeAccrueOverrides>
+<ns0:ElementNumber />
+<ns0:IncomeTransID />
+<ns0:IncomeInvestment />
+<ns0:FinancingInvLong />
+<ns0:FinancingInvShort />
+<ns0:EffectiveDate />
+<ns0:LongDivPercent />
+<ns0:ShortDivPercent />
+</ns0:TransIncomeAccrueOverrides>
+<ns0:UDFTable>
+<ns0:UDFLabel />
+<ns0:UDFData />
+</ns0:UDFTable>
+</ns0:Sell_New>
+<ns0:Sell_New>
+<ns0:Portfolio>12307</ns0:Portfolio>
+<ns0:LocationAccount>JPM</ns0:LocationAccount>
+<ns0:Strategy>Default</ns0:Strategy>
+<ns0:Investment>BloombergId=BBG000BDW8M1</ns0:Investment>
+<ns0:EventDate>2016-12-23T00:00:00</ns0:EventDate>
+<ns0:SettleDate>2016-12-29T00:00:00</ns0:SettleDate>
+<ns0:ActualSettleDate>2016-12-29T00:00:00</ns0:ActualSettleDate>
+<ns0:Comments>Common Stock</ns0:Comments>
+<ns0:UserDefDate1 />
+<ns0:UserDefDate2 />
+<ns0:UserTranId1>5794</ns0:UserTranId1>
+<ns0:UserTranId2 />
+<ns0:KeyValue>5794</ns0:KeyValue>
+<ns0:InvestmentClosingRule />
+<ns0:SecondaryInvestmentClosingRule />
+<ns0:Quantity>1818000.0</ns0:Quantity>
+<ns0:Price>10.0032</ns0:Price>
+<ns0:NetCounterAmount>CALC</ns0:NetCounterAmount>
+<ns0:SwapPrice />
+<ns0:TotCommission>36371.64</ns0:TotCommission>
+<ns0:NotionalAmount />
+<ns0:SecFeeAmount />
+<ns0:NetTradeFlag />
+<ns0:AccrueCommissionFlag />
+<ns0:PriceDenomination>HKD</ns0:PriceDenomination>
+<ns0:CounterFXDenomination />
+<ns0:CounterInvestment>HKD</ns0:CounterInvestment>
+<ns0:CounterTDateFx />
+<ns0:CounterSDateFx />
+<ns0:AccruedInterest>CALC</ns0:AccruedInterest>
+<ns0:Broker>CLSA-EQ</ns0:Broker>
+<ns0:ContractExpirationDate />
+<ns0:OriginalFace />
+<ns0:PerShareAmount />
+<ns0:Trader />
+<ns0:WashSalesNonCovered />
+<ns0:CreditFacilitySettlementType />
+<ns0:GenericInv />
+<ns0:FinancingInv />
+<ns0:tradeFX>1.0</ns0:tradeFX>
+<ns0:NetInvestmentAmount>CALC</ns0:NetInvestmentAmount>
+<ns0:InvestmentAccruedInterest />
+<ns0:GlobalAmount />
+<ns0:Yield />
+<ns0:AccountingView />
+<ns0:CloseLeg />
+<ns0:EventDesc />
+<ns0:Analyst />
+<ns0:Manager />
+<ns0:FundStructure>CALC</ns0:FundStructure>
+<ns0:HeldToMaturity>0</ns0:HeldToMaturity>
+<ns0:UserDefField1 />
+<ns0:TradeFlatFlag />
+<ns0:SweepOnSettle />
+<ns0:ReceiveFinancing />
+<ns0:FinanceAIandPayFullCoupon />
+<ns0:DirtyPriced />
+<ns0:DelayedCompensation />
+<ns0:SwapPriceEnabled />
+<ns0:SettlementDays />
+<ns0:UseAmortPriceList />
+<ns0:TradeSource>AIM</ns0:TradeSource>
+<ns0:IntTradeExclInByPassStrat />
+<ns0:UnsupervisedFlag />
+<ns0:UserDefField1 />
+<ns0:TradesAsType />
+<ns0:CashSource />
+<ns0:ExecutionVenue />
+<ns0:ExecutionVenueType />
+<ns0:USIIssuer />
+<ns0:BlockUSIIssuer />
+<ns0:USI />
+<ns0:BlockUSI />
+<ns0:BlockSEFTradeID />
+<ns0:ExternalSystemReferenceID />
+<ns0:TradeExpenses>
+<ns0:ExpenseAmt>18186.0</ns0:ExpenseAmt>
+<ns0:ExpenseCode>Stamp_Duty</ns0:ExpenseCode>
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+<ns0:ExpenseNumber>6</ns0:ExpenseNumber>
+</ns0:TradeExpenses>
+<ns0:TradeExpenses>
+<ns0:ExpenseAmt>909.29</ns0:ExpenseAmt>
+<ns0:ExpenseCode>Exchange_Fee</ns0:ExpenseCode>
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+<ns0:ExpenseNumber>3</ns0:ExpenseNumber>
+</ns0:TradeExpenses>
+<ns0:TradeExpenses>
+<ns0:ExpenseAmt>491.02</ns0:ExpenseAmt>
+<ns0:ExpenseCode>Transaction_Levy</ns0:ExpenseCode>
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+<ns0:ExpenseNumber>7</ns0:ExpenseNumber>
+</ns0:TradeExpenses>
+<ns0:InvestmentClosingList>
+<ns0:LotId />
+<ns0:ReliefQuantity />
+</ns0:InvestmentClosingList>
+<ns0:NonCapExpenses>
+<ns0:NonCapNumber />
+<ns0:NonCapCurrency />
+<ns0:LocationAccount />
+<ns0:NonCapExpenseCode />
+<ns0:NonCapLiabilityCode />
+<ns0:NonCapPaymentType />
+<ns0:NonCapSpecifyDate />
+<ns0:NonCapAmount />
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+</ns0:NonCapExpenses>
+<ns0:ProcessStatuses>
+<ns0:ProcessCode />
+<ns0:StatusCode />
+</ns0:ProcessStatuses>
+<ns0:TransIncomeAccrueOverrides>
+<ns0:ElementNumber />
+<ns0:IncomeTransID />
+<ns0:IncomeInvestment />
+<ns0:FinancingInvLong />
+<ns0:FinancingInvShort />
+<ns0:EffectiveDate />
+<ns0:LongDivPercent />
+<ns0:ShortDivPercent />
+</ns0:TransIncomeAccrueOverrides>
+<ns0:UDFTable>
+<ns0:UDFLabel />
+<ns0:UDFData />
+</ns0:UDFTable>
+</ns0:Sell_New>
+<ns0:Sell_New>
+<ns0:Portfolio>12307</ns0:Portfolio>
+<ns0:LocationAccount>JPM</ns0:LocationAccount>
+<ns0:Strategy>Default</ns0:Strategy>
+<ns0:Investment>BloombergId=BBG000BWGTN0</ns0:Investment>
+<ns0:EventDate>2016-12-23T00:00:00</ns0:EventDate>
+<ns0:SettleDate>2016-12-29T00:00:00</ns0:SettleDate>
+<ns0:ActualSettleDate>2016-12-29T00:00:00</ns0:ActualSettleDate>
+<ns0:Comments>Common Stock</ns0:Comments>
+<ns0:UserDefDate1 />
+<ns0:UserDefDate2 />
+<ns0:UserTranId1>5791</ns0:UserTranId1>
+<ns0:UserTranId2 />
+<ns0:KeyValue>5791</ns0:KeyValue>
+<ns0:InvestmentClosingRule />
+<ns0:SecondaryInvestmentClosingRule />
+<ns0:Quantity>1448000.0</ns0:Quantity>
+<ns0:Price>3.0544</ns0:Price>
+<ns0:NetCounterAmount>CALC</ns0:NetCounterAmount>
+<ns0:SwapPrice />
+<ns0:TotCommission>6634.16</ns0:TotCommission>
+<ns0:NotionalAmount />
+<ns0:SecFeeAmount />
+<ns0:NetTradeFlag />
+<ns0:AccrueCommissionFlag />
+<ns0:PriceDenomination>HKD</ns0:PriceDenomination>
+<ns0:CounterFXDenomination />
+<ns0:CounterInvestment>HKD</ns0:CounterInvestment>
+<ns0:CounterTDateFx />
+<ns0:CounterSDateFx />
+<ns0:AccruedInterest>CALC</ns0:AccruedInterest>
+<ns0:Broker>CG-EQ</ns0:Broker>
+<ns0:ContractExpirationDate />
+<ns0:OriginalFace />
+<ns0:PerShareAmount />
+<ns0:Trader />
+<ns0:WashSalesNonCovered />
+<ns0:CreditFacilitySettlementType />
+<ns0:GenericInv />
+<ns0:FinancingInv />
+<ns0:tradeFX>1.0</ns0:tradeFX>
+<ns0:NetInvestmentAmount>CALC</ns0:NetInvestmentAmount>
+<ns0:InvestmentAccruedInterest />
+<ns0:GlobalAmount />
+<ns0:Yield />
+<ns0:AccountingView />
+<ns0:CloseLeg />
+<ns0:EventDesc />
+<ns0:Analyst />
+<ns0:Manager />
+<ns0:FundStructure>CALC</ns0:FundStructure>
+<ns0:HeldToMaturity>0</ns0:HeldToMaturity>
+<ns0:UserDefField1 />
+<ns0:TradeFlatFlag />
+<ns0:SweepOnSettle />
+<ns0:ReceiveFinancing />
+<ns0:FinanceAIandPayFullCoupon />
+<ns0:DirtyPriced />
+<ns0:DelayedCompensation />
+<ns0:SwapPriceEnabled />
+<ns0:SettlementDays />
+<ns0:UseAmortPriceList />
+<ns0:TradeSource>AIM</ns0:TradeSource>
+<ns0:IntTradeExclInByPassStrat />
+<ns0:UnsupervisedFlag />
+<ns0:UserDefField1 />
+<ns0:TradesAsType />
+<ns0:CashSource />
+<ns0:ExecutionVenue />
+<ns0:ExecutionVenueType />
+<ns0:USIIssuer />
+<ns0:BlockUSIIssuer />
+<ns0:USI />
+<ns0:BlockUSI />
+<ns0:BlockSEFTradeID />
+<ns0:ExternalSystemReferenceID />
+<ns0:TradeExpenses>
+<ns0:ExpenseAmt>4423.0</ns0:ExpenseAmt>
+<ns0:ExpenseCode>Stamp_Duty</ns0:ExpenseCode>
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+<ns0:ExpenseNumber>6</ns0:ExpenseNumber>
+</ns0:TradeExpenses>
+<ns0:TradeExpenses>
+<ns0:ExpenseAmt>221.14</ns0:ExpenseAmt>
+<ns0:ExpenseCode>Exchange_Fee</ns0:ExpenseCode>
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+<ns0:ExpenseNumber>3</ns0:ExpenseNumber>
+</ns0:TradeExpenses>
+<ns0:TradeExpenses>
+<ns0:ExpenseAmt>119.41</ns0:ExpenseAmt>
+<ns0:ExpenseCode>Transaction_Levy</ns0:ExpenseCode>
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+<ns0:ExpenseNumber>7</ns0:ExpenseNumber>
+</ns0:TradeExpenses>
+<ns0:InvestmentClosingList>
+<ns0:LotId />
+<ns0:ReliefQuantity />
+</ns0:InvestmentClosingList>
+<ns0:NonCapExpenses>
+<ns0:NonCapNumber />
+<ns0:NonCapCurrency />
+<ns0:LocationAccount />
+<ns0:NonCapExpenseCode />
+<ns0:NonCapLiabilityCode />
+<ns0:NonCapPaymentType />
+<ns0:NonCapSpecifyDate />
+<ns0:NonCapAmount />
+<ns0:ChargeCategory />
+<ns0:EvaluationRule />
+</ns0:NonCapExpenses>
+<ns0:ProcessStatuses>
+<ns0:ProcessCode />
+<ns0:StatusCode />
+</ns0:ProcessStatuses>
+<ns0:TransIncomeAccrueOverrides>
+<ns0:ElementNumber />
+<ns0:IncomeTransID />
+<ns0:IncomeInvestment />
+<ns0:FinancingInvLong />
+<ns0:FinancingInvShort />
+<ns0:EffectiveDate />
+<ns0:LongDivPercent />
+<ns0:ShortDivPercent />
+</ns0:TransIncomeAccrueOverrides>
+<ns0:UDFTable>
+<ns0:UDFLabel />
+<ns0:UDFData />
+</ns0:UDFTable>
+</ns0:Sell_New>
+</ns0:TransactionRecords>
+</ns0:GenevaLoader>
