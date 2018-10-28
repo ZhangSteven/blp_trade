@@ -7,6 +7,7 @@
 # 
 
 
+
 import xml.etree.ElementTree as ET
 import logging
 logger = logging.getLogger(__name__)
@@ -19,89 +20,107 @@ def fileToLines(file):
 
 	read a text file and return its content as list of lines (String).
 	"""
-	return []
+	with open(file, 'r') as f:
+		return [line for line in f]
 
 
 
-def stripXMLHeader(lines):
+def stripGenevaHeader(lines):
 	"""
-	[List] lines => [String] content after strip
+	[List] lines => [List] lines after taking out Geneva headers
 
-	if the content has the below lines:
+	if the lines start with <GenevaLoader> and end with <GenevaLoader>, as below:
 
-	<?xml version="1.0">
 	<GenevaLoader xmlns=...>
 	... content ...
 	</GenevaLoader>
 
-	Then strip the two lines of <GenevaLoader ...> at line 2 and </GenevaLoader>
-	at the last line.
+	Then strip the first and the last line.
 	"""
-	return []
+	if lines[0].startswith('<GenevaLoader'):
+		return lines[1:len(lines)-1]
+	else:
+		return lines
 
 
 
-def linesToString(lines):
+def filterQuantTrades(lines):
 	"""
-	[List] lines => [String] combined lines into one String
+	[List] lines => [bytes] XML content (string encoded with utf-8)
+
+	Parse the lines as XML, as below:
+
+	<TransactionRecords>
+	... transaction records as child elements
+	</TransactionRecords>
+
+	only keep child elements relating to Quantitative funds.
+
+	Buggy: this way of removing documents is unsafe. When elements to be
+	removed is the just last one, it looks OK. But if it is in the middle,
+	then it stops working.
 	"""
-	return ''
+	root = ET.fromstringlist(lines)
+	newRoot = ET.Element('TransactionRecords')
+	for transaction in root:
+		portfolio = transaction.find('Portfolio')
+		if portfolio != None and isRightPortfolio(portfolio.text):
+			newRoot.append(transaction)
+
+	return ET.tostring(newRoot, encoding='utf-8', method='xml', short_empty_elements=True)
 
 
 
-def fileToTransactions(file):
+def removeQuantTrades(lines):
 	"""
-	[String] file => [List] transactions
+	[List] lines => [bytes] XML content (string encoded with utf-8)
 
-	Note: this version assumes:
-	1. The root elements is <GenevaLoader>, with xmlns definitions.
-	2. <GenevaLoader> had only one <TransactionRecords> child element that has
-		all the transactions.
+	Parse the lines as XML, as below:
 
-	For an example of such file, see samples/TransToGeneva20161223.xml
+	<TransactionRecords>
+	... transaction records as child elements
+	</TransactionRecords>
+
+	It's the opposite of filterQuantTrades(), only keep child elements 
+	not relating to Quantitative funds.
 	"""
-	tree = ET.parse(file)
-	root = tree.getroot()
+	root = ET.fromstringlist(lines)
+	newRoot = ET.Element('TransactionRecords')
+	for transaction in root:
+		portfolio = transaction.find('Portfolio')
+		if portfolio == None or not isRightPortfolio(portfolio.text):
+			newRoot.append(transaction)
 
-	ns = {
-		'default': 'http://www.advent.com/SchemaRevLevel758/Geneva',
-		'xsi': 'http://www.w3.org/2001/XMLSchema-instance'
-	}
-
-	for transaction in root[0]:
-		portfolio = transaction.find('default:Portfolio', ns)
-		if portfolio != None and portfolio.text != '12307':
-			print(portfolio.text)
-			root[0].remove(transaction)
-
-	# write the tree as an XML file, but the file will have a default namespace
- 	# ns0 attached to each element. 
-	tree.write('output.xml')
+	return ET.tostring(newRoot, encoding='utf-8', method='xml', short_empty_elements=True)
 
 
 
-
-def filterTransactions(transactions, portfolioId):
+def writeXMLFile(content, filename='output.xml'):
 	"""
-	[List] transactions => [List] transactions
+	[byte string] content => create a text file.
+
+	take the content (bytes encoded as utf-8), prepand and append Geneva XML header 
+	to it, then	write to a text file, return the file's full path.
 	"""
-	return []
+	with open(filename, 'wb') as file:
+		file.write(
+			b'<GenevaLoader xmlns="http://www.advent.com/SchemaRevLevel758/Geneva" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.advent.com/SchemaRevLevel758/Geneva masterschema.xsd">\n' + \
+			content + \
+			b'</GenevaLoader>')
 
 
 
-def transactionsToString(transactions):
+
+def isRightPortfolio(portId):
 	"""
-	[List] transactions => [String] content
-	"""
-	return ""
+	[String] portId => [Bool] yesno
 
-
-
-def writeFile(content, file):
+	Determine whether the portfolio id is of interest.
 	"""
-	[String] content, [String] file => write content to file
-	"""
-	pass
+	if portId.startswith('40006'):
+		return True
+	else:
+		return False
 
 
 
@@ -112,7 +131,12 @@ if __name__ == '__main__':
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
 	from os.path import join
-	fileToTransactions(join(get_current_path(), 'samples', 'TransToGeneva20161223.xml'))
+	# fileToTransactions(join(get_current_path(), 'samples', 'TransToGeneva20161223.xml'))
 	# fileToTransactions(join(get_current_path(), 'samples', 'TransToGeneva20161223_noheader.xml'))
 
-	
+	writeXMLFile(filterQuantTrades(stripGenevaHeader(fileToLines(
+		join(get_current_path(), 'samples', '40006_simple_noheader.xml')))))
+
+	writeXMLFile(removeQuantTrades(stripGenevaHeader(fileToLines(
+		join(get_current_path(), 'samples', '40006_simple.xml')))),
+		'output2.xml')
