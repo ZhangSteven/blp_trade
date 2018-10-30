@@ -25,22 +25,39 @@ def fileToLines(file):
 
 
 
-def stripGenevaHeader(lines):
+def addRemoveHeader(lines):
 	"""
 	[List] lines => [List] lines after taking out Geneva headers
 
-	if the lines start with <GenevaLoader> and end with <GenevaLoader>, as below:
+	There are two possibilities of the XML file to process:
 
+	1) The root elements <GenevaLoader> and <TransactionRecords> are missing,
+		only child elements are there, like:
+
+		<Sell_New>
+		...
+		</Sell_New>
+		<Buy_New>
+		...
+		<Buy_New>
+
+
+	2) The root elements are there, like:
 	<GenevaLoader xmlns=...>
-	... content ...
+		<TransactionRecords>
+			... child elements
+		</TransactionRecords>
 	</GenevaLoader>
 
-	Then strip the first and the last line.
+	If it is case (1), then we use the <TransactionRecords> tag to wrap all the
+	content; If it is case (2), then we remove <GenevaLoader> header. In either
+	case, we end up with an XML document with <TransactionRecords> as the root
+	element.
 	"""
 	if lines[0].startswith('<GenevaLoader'):
 		return lines[1:len(lines)-1]
 	else:
-		return lines
+		return ['<TransactionRecords>'] + lines + ['</TransactionRecords>']
 
 
 
@@ -117,7 +134,7 @@ def isRightPortfolio(portId):
 
 	Determine whether the portfolio id is of interest.
 	"""
-	if portId.startswith('40006'):
+	if portId.startswith('TEST6'):
 		return True
 	else:
 		return False
@@ -131,12 +148,13 @@ if __name__ == '__main__':
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
 	from os.path import join
-	# fileToTransactions(join(get_current_path(), 'samples', 'TransToGeneva20161223.xml'))
-	# fileToTransactions(join(get_current_path(), 'samples', 'TransToGeneva20161223_noheader.xml'))
 
-	writeXMLFile(filterQuantTrades(stripGenevaHeader(fileToLines(
-		join(get_current_path(), 'samples', '40006_simple_noheader.xml')))))
+	# writeXMLFile(filterQuantTrades(addRemoveHeader(fileToLines(
+	# 	join(get_current_path(), 'samples', '40006_simple_noheader.xml')))))
 
-	writeXMLFile(removeQuantTrades(stripGenevaHeader(fileToLines(
-		join(get_current_path(), 'samples', '40006_simple.xml')))),
-		'output2.xml')
+	# writeXMLFile(removeQuantTrades(addRemoveHeader(fileToLines(
+	# 	join(get_current_path(), 'samples', '40006_simple.xml')))),
+	# 	'output2.xml')
+
+	writeXMLFile(filterQuantTrades(addRemoveHeader(fileToLines(
+		join(get_current_path(), 'samples', 'TransToGeneva20181030_noheader.xml')))))

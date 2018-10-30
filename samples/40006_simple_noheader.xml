@@ -1,4 +1,3 @@
-<TransactionRecords>
 <Sell_New>
 <Portfolio>40006-A</Portfolio>
 <EventDate>2016-12-23T00:00:00</EventDate>
@@ -24,4 +23,3 @@
 <EventDate>2016-12-23T00:00:00</EventDate>
 <Price>5.43</Price>
 </Buy_New>
-</TransactionRecords>
