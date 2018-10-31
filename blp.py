@@ -7,7 +7,6 @@
 # 
 # What to do next:
 # 
-# 1. What do other actions look like: cancel or correct tickets?
 # 2. What if we add or changed trades after the trade upload at 12:00pm, say
 # 		3pm? In the current logic, those added trades after 12:00pm will also
 # 		be filter out at 10:00pm upload. So is there a way to upload the
@@ -19,6 +18,7 @@
 
 
 import xml.etree.ElementTree as ET
+from blp_trade.utility import get_current_path
 from os.path import join
 from datetime import datetime
 import logging
@@ -28,6 +28,29 @@ logger = logging.getLogger(__name__)
 
 class KeyValueNotFound(Exception):
 	pass
+
+
+
+def extractTradesToXML(inputFile, outputFile):
+	"""
+	[String] input file, [String] output file => extract Trades with the right
+	portfolio id and write those trades to the output file in XML format.
+
+	When extractTradesToXML() is called multiple times in a day, trades in its
+	output XML files won't overlap because it saves key values of trades extracted
+	to a key value file.	  
+	"""
+	writeXMLFile(
+		filterTrades(
+			addRemoveHeader(
+				fileToLines(
+					inputFile
+				)
+			)
+			, loadKeys()
+		)
+		, outputFile
+	)
 
 
 
@@ -169,8 +192,7 @@ def writeXMLFile(content, filename='output.xml'):
 		file.write(
 			b'<GenevaLoader xmlns="http://www.advent.com/SchemaRevLevel758/Geneva" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.advent.com/SchemaRevLevel758/Geneva masterschema.xsd">\n' + \
 			content + \
-			b'</GenevaLoader>')
-
+			b'\n</GenevaLoader>')
 
 
 
@@ -225,38 +247,38 @@ def getFilename():
 
 
 
+def deleteKeyFile():
+	"""
+	Delete the key file keys_yyyymmdd.txt (today's date) in the keyFiles folder.
+
+	For testing purpose only.
+	"""
+	import os
+	try:
+		os.remove(getFilename())
+	except FileNotFoundError:
+		pass	# ignore
+
+
+
 if __name__ == '__main__':
-	from blp_trade.utility import get_current_path
 	import logging.config
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
-	# writeXMLFile(
-	# 	filterTrades(
-	# 		addRemoveHeader(
-	# 			fileToLines(
-	# 				join(get_current_path()
-	# 					, 'samples'
-	# 					, 'TransToGeneva20181031_morning.xml'
-	# 				)
-	# 			)
-	# 		)
-	# 		, loadKeys()
-	# 	)
-	# 	, 'output.xml'
-	# )
+	extractTradesToXML(
+		join(get_current_path()
+			, 'samples'
+			, 'TransToGeneva20181031_morning.xml'
+		)
+		, 'output.xml'
+	)
 
-
-	writeXMLFile(
-		filterTrades(
-			addRemoveHeader(
-				fileToLines(
-					join(get_current_path()
-						, 'samples'
-						, 'TransToGeneva20181031_night.xml'
-					)
-				)
-			)
-			, loadKeys()
+	extractTradesToXML(
+		join(get_current_path()
+			, 'samples'
+			, 'TransToGeneva20181031_night.xml'
 		)
 		, 'output2.xml'
 	)
+
+	deleteKeyFile()		# so that subsequent runs can still generate output

@@ -4,7 +4,8 @@
 import unittest2
 from os.path import join
 from blp_trade.utility import get_current_path
-from blp_trade.blp import 
+from blp_trade.blp import deleteKeyFile, extractTradesToXML, fileToLines, \
+                            addRemoveHeader, loadKeys
 
 
 
@@ -13,37 +14,28 @@ class TestBlpTrade(unittest2.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestBlpTrade, self).__init__(*args, **kwargs)
 
+    @classmethod
+    def setUp(cls):
+        deleteKeyFile()
 
-    def testTradeRecords(self):
-        records = createTradeRecords(join(get_current_path(), 'samples'))
-        self.assertEqual(len(records), 150)
-        self.verifyTrade1(records[0])
-        self.verifyTrade2(records[29])
-
-
-    def verifyTrade1(self, record):
-        """
-        First trade
-        """
-        self.assertEqual(len(record), 6)   # there should be 6 fields
-        self.assertEqual('VXF3', record['BloombergTicker'])
-        self.assertEqual('LONG', record['Side'])
-        self.assertEqual(10, record['Quantity'])
-        self.assertAlmostEqual(18.9, record['Price'])
-        self.assertEqual(datetime(2012,11,19), record['TradeDate'])
-        self.assertEqual(datetime(2012,11,19), record['SettlementDate'])
+    @classmethod
+    def tearDown(cls):
+        deleteKeyFile()
 
 
 
-    def verifyTrade2(self, record):
-        """
-        30th trade
-        """
-        self.assertEqual(len(record), 6)   # there should be 6 fields
-        self.assertEqual('VXH3', record['BloombergTicker'])
-        self.assertEqual('SHORT', record['Side'])
-        self.assertEqual(10, record['Quantity'])
-        self.assertAlmostEqual(20.8, record['Price'])
-        self.assertEqual(datetime(2012,11,19), record['TradeDate'])
-        self.assertEqual(datetime(2012,11,19), record['SettlementDate'])
+    def testTradeXML(self):
+        inputFile = join(get_current_path(), 'samples', 'TransToGeneva20181031_morning.xml')
+        outputFile = join(get_current_path(), 'output.xml')
+        extractTradesToXML(inputFile, outputFile)
+        self.assertEqual(loadKeys(), ['1232542018', '124351'])
 
+        inputFile2 = join(get_current_path(), 'samples', 'TransToGeneva20181031_night.xml')
+        extractTradesToXML(inputFile2, outputFile)
+
+        # this time, the output file should contain only one trade. Therefore,
+        # if we delete the key file, which means all trades will be extracted,
+        # we should still see just one trade.
+        deleteKeyFile()
+        extractTradesToXML(outputFile, 'test.xml')
+        self.assertEqual(loadKeys(), ['124357'])
