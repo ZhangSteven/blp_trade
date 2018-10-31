@@ -18,7 +18,8 @@
 
 
 import xml.etree.ElementTree as ET
-from blp_trade.utility import get_current_path
+from blp_trade.utility import get_current_path, get_input_directory, \
+								get_portfolio_id
 from os.path import join
 from datetime import datetime
 import logging
@@ -221,7 +222,7 @@ def isRightPortfolio(portId):
 
 	Determine whether the portfolio id is of interest.
 	"""
-	if portId.startswith('40006'):
+	if portId.startswith(get_portfolio_id()):
 		return True
 	else:
 		return False
@@ -285,24 +286,21 @@ if __name__ == '__main__':
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
 	extractTradesToXML(
-		join(get_current_path()
-			, 'samples'
+		join(get_input_directory()
 			, 'TransToGeneva20181031_morning.xml'
 		)
 		, 'output.xml'
 	)
 
 	extractTradesToXML(
-		join(get_current_path()
-			, 'samples'
+		join(get_input_directory()
 			, 'TransToGeneva20181031_night.xml'
 		)
 		, 'output2.xml'
 	)
 
 	extractOtherToXML(
-		join(get_current_path()
-			, 'samples'
+		join(get_input_directory()
 			, 'TransToGeneva20181031_night.xml'
 		)
 		, 'output3.xml'
