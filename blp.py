@@ -54,6 +54,25 @@ def extractTradesToXML(inputFile, outputFile):
 
 
 
+def extractOtherToXML(inputFile, outputFile):
+	"""
+	[String] input file, [String] output file => extract everything except 
+	trades with the right portfolio id and write to the output file in XML 
+	format.
+	"""
+	writeXMLFile(
+		inverseFilterTrades(
+			addRemoveHeader(
+				fileToLines(
+					inputFile
+				)
+			)
+		)
+		, outputFile
+	)
+
+
+
 def fileToLines(file):
 	"""
 	[String] file => [List] lines
@@ -279,6 +298,14 @@ if __name__ == '__main__':
 			, 'TransToGeneva20181031_night.xml'
 		)
 		, 'output2.xml'
+	)
+
+	extractOtherToXML(
+		join(get_current_path()
+			, 'samples'
+			, 'TransToGeneva20181031_night.xml'
+		)
+		, 'output3.xml'
 	)
 
 	deleteKeyFile()		# so that subsequent runs can still generate output
