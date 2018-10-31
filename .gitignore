@@ -7,3 +7,5 @@ logs/*.log
 # ignore the test XML file
 output*.xml
 
+# ignore the key files
+keyFiles/keys_*.txt
