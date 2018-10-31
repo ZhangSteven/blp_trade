@@ -10,3 +10,6 @@ test.xml
 
 # ignore the key files
 keyFiles/keys_*.txt
+
+# ignore the upload files
+uploads/*.xml

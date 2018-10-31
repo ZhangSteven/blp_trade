@@ -238,7 +238,7 @@ def saveKeys(keyList):
 
 	with open(getFilename(), 'a') as textFile:
 		for key in keyList:
-			print(f'{key}', file=textFile)
+			print('{0}'.format(key), file=textFile)
 
 
 
