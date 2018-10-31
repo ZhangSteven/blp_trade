@@ -1,8 +1,9 @@
 # coding=utf-8
 # 
 
-from blp_trade.blp import extractTradesToXML
+from blp_trade.blp import extractOtherToXML
 from blp_trade.utility import get_current_path, get_input_directory
+from blp_trade.get_trade import upload
 from os.path import join
 from datetime import datetime
 import logging
@@ -14,7 +15,7 @@ def inputFile():
 	"""
 	The Bloomberg XML file name
 	"""
-	return join(get_input_directory(), 
+	return join(get_input_directory(), 'SENT',
 				'TransToGeneva' + datetime.now().strftime('%Y%m%d') + '.xml')
 
 
@@ -24,12 +25,8 @@ def outputFile():
 	The resulting XML file after trade extraction.
 	"""
 	return join(get_current_path(), 'uploads', 
-				'BlpTrades' + datetime.now().strftime('%Y%m%d%H%M%S') + '.xml')
+				'BlpOthers' + datetime.now().strftime('%Y%m%d') + '.xml')
 
-
-
-def upload(file):
-	pass
 
 
 
@@ -38,5 +35,5 @@ if __name__ == '__main__':
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
 	outputFile = outputFile()
-	extractTradesToXML(inputFile(), outputFile)
+	extractOtherToXML(inputFile(), outputFile)
 	upload(outputFile)

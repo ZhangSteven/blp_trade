@@ -13,3 +13,6 @@ keyFiles/keys_*.txt
 
 # ignore the upload files
 uploads/*.xml
+
+# ignore the configure file
+blp.config
