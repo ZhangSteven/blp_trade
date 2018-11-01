@@ -2,7 +2,7 @@
 # 
 
 from blp_trade.blp import extractTradesToXML
-from blp_trade.utility import get_current_path, get_input_directory
+from blp_trade.utility import get_current_path, get_input_directory, getFtpConfig
 from utils.sftp import upload
 from os.path import join
 from datetime import datetime
@@ -16,7 +16,7 @@ def inputFile():
 	The Bloomberg XML file name
 	"""
 	return join(get_input_directory(), 
-				'TransToGeneva' + datetime.now().strftime('%Y%m%d') + '.xml')
+				'TransToGeneva' + getDateString() + '.xml')
 
 
 
@@ -29,36 +29,56 @@ def outputFile():
 
 
 
+def getDateString():
+	"""
+	return date as string in yyyymmdd format.
+	"""
+	return datetime.now().strftime('%Y%m%d')
+
+
+
 def doUpload(file):
-	upload([file], getUploadConfig())
-
-
-
-def getUploadConfig():
-	"""
-	Returns the upload configuration.
-	"""
-	config = {}
-	config['winscpPath'] = r'C:\Program Files (x86)\WinSCP\WinSCP.com'
-	config['timeout'] = 120
-	config['scriptDir'] = r'C:\Users\steven.zhang\AppData\Local\Programs\Git\git\blp_trade\winscp_scripts'
-	config['logDir'] = r'C:\Users\steven.zhang\AppData\Local\Programs\Git\git\blp_trade\winscp_logs'
-	config['user'] = 'svc_sftp'
-	config['password'] = 'CEcY26' 
-	config['server'] = 'sftp.clamc.com.hk'
-	config['targetDir'] = 'reconciliation'
-	return config
+	upload([file], getFtpConfig())
 
 
 
 if __name__ == '__main__':
 	"""
-	Prepare to add a command line argument, so that it does not start upload
-	by default. 
+	To test this module, run:
+
+		python get_trade.py
+
+	The above will run test files and won't do ftp upload.
+
+	To run it in production model, do:
+
+		python get_trade.py --mode production
+
+	It will retrieve file based on today's date and do ftp upload.
+
+	In either case, the output trade file will be stored in the 'upload'
+	folder.
 	"""
 	import logging.config
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
-	outputFile = outputFile()
-	extractTradesToXML(inputFile(), outputFile)
-	doUpload(outputFile)
+	import argparse
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--mode', nargs='?', metavar='mode', default='test')
+	args = parser.parse_args()
+
+	if args.mode == 'production':
+		inputFile = inputFile()
+	else:
+		inputFile = join(get_current_path(), 'samples', 'TransToGeneva20181031_morning.xml')
+
+	try:
+		extractTradesToXML(inputFile, outputFile())
+		if args.mode == 'production':
+			doUpload(outputFile())
+
+	except:
+		logger.exception('Error')
+	
+
+

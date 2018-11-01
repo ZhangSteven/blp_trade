@@ -45,3 +45,21 @@ def get_input_directory():
 def get_portfolio_id():
 	global config
 	return config['input']['portfolio']
+
+
+
+def getFtpConfig():
+	"""
+	Returns: [Dictionary] config, for FTP related configuration
+	"""
+	global config
+	cfg = {}
+	cfg['winscpPath'] = config['ftp']['winscpPath']
+	cfg['timeout'] = int(config['ftp']['timeout'])
+	cfg['scriptDir'] = config['ftp']['scriptDir']
+	cfg['logDir'] = config['ftp']['logDir']
+	cfg['user'] = config['ftp']['user']
+	cfg['password'] = config['ftp']['password']
+	cfg['server'] = config['ftp']['server']
+	cfg['targetDir'] = config['ftp']['targetDir']
+	return cfg

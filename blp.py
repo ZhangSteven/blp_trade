@@ -5,15 +5,6 @@
 # 1. Extract trades of the Quant fund.
 # 2. Extract everything else (trades, trade cancellations) into a new file.
 # 
-# What to do next:
-# 
-# 2. What if we add or changed trades after the trade upload at 12:00pm, say
-# 		3pm? In the current logic, those added trades after 12:00pm will also
-# 		be filter out at 10:00pm upload. So is there a way to upload the
-# 		incremental part? Maybe we can use the ticket number to handle:
-# 		uploaded trades' have their ticket numbers stored somewhere, then when
-# 		we do another extract and upload process, it will only extract those
-# 		not uploaded trades.
 
 
 
@@ -41,6 +32,7 @@ def extractTradesToXML(inputFile, outputFile):
 	output XML files won't overlap because it saves key values of trades extracted
 	to a key value file.	  
 	"""
+	logger.info('extractTradesToXML(): input {0}'.format(inputFile))
 	writeXMLFile(
 		filterTrades(
 			addRemoveHeader(
@@ -61,6 +53,7 @@ def extractOtherToXML(inputFile, outputFile):
 	trades with the right portfolio id and write to the output file in XML 
 	format.
 	"""
+	logger.info('extractOtherToXML(): input {0}'.format(inputFile))
 	writeXMLFile(
 		inverseFilterTrades(
 			addRemoveHeader(
