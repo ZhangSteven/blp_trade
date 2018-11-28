@@ -1,12 +1,15 @@
 # blp_trade
-Extract trades from Bloomberg's XML file and create new XML files with the
-extracted trades.
+Extract trades from Bloomberg's XML file, then create a new XML file with the
+extracted trades and upload it to SFTP server.
 
 
 
-# ver 0.1, 2018-11-01
-When extracting trades for certain portfolios (the "right" portfolio, e.g. 40006-A etc.) from Bloomberg's XML file, the program saves the key values of the converted trades to a text file. Therefore subsequent calls to the extraction function will not retrieve trades that have been extracted before (on the same day). But trade cancellations for those portfolios won't be extracted because in the XML cancellations don't have the <Portfolio> tag.
+# ver 0.1, 2018-11-28
+Extract trades from an XML file of the right portfolio, create a new XML file with the extracted trades and upload the output file to the SFTP server (in production mode only).
 
 
+NOTE: 
 
+(1) After extracting trades from a trade file, subsequent calls to the extraction function will not retrieve trades that have been extracted (saved into the key file keys_yyyymmdd.txt). 
 
+(2) Trade cancellations won't be extracted because those transactions don't have the <Portfolio> tag.
