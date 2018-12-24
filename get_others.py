@@ -45,9 +45,10 @@ if __name__ == '__main__':
 		inputFile = join(get_current_path(), 'samples', 'TransToGeneva20181031_full.xml')
 
 	try:
-		extractOtherToXML(inputFile, outputFile())
+		outputFile = outputFile()
+		extractOtherToXML(inputFile, outputFile)
 		if args.mode == 'production':
-			doUpload(outputFile())
+			doUpload(outputFile)
 	
 	except:
 		logger.exception('Error')

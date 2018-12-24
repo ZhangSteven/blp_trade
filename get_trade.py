@@ -70,12 +70,14 @@ if __name__ == '__main__':
 	if args.mode == 'production':
 		inputFile = inputFile()
 	else:
-		inputFile = join(get_current_path(), 'samples', 'TransToGeneva20181031_morning.xml')
+		# inputFile = join(get_current_path(), 'samples', 'TransToGeneva20181031_morning.xml')
+		inputFile = join(get_current_path(), 'TransToGeneva20181219.xml')
 
 	try:
-		extractTradesToXML(inputFile, outputFile())
+		outputFile = outputFile()
+		extractTradesToXML(inputFile, outputFile)
 		if args.mode == 'production':
-			doUpload(outputFile())
+			doUpload(outputFile)
 
 	except:
 		logger.exception('Error')
