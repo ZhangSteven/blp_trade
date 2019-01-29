@@ -64,14 +64,14 @@ if __name__ == '__main__':
 
 	import argparse
 	parser = argparse.ArgumentParser()
+	parser.add_argument('--file', nargs='?', metavar='input file', type=str)
 	parser.add_argument('--mode', nargs='?', metavar='mode', default='test')
 	args = parser.parse_args()
 
 	if args.mode == 'production':
 		inputFile = inputFile()
 	else:
-		# inputFile = join(get_current_path(), 'samples', 'TransToGeneva20181031_morning.xml')
-		inputFile = join(get_current_path(), 'TransToGeneva20181219.xml')
+		inputFile = join(get_current_path(), args.file)
 
 	try:
 		outputFile = outputFile()
