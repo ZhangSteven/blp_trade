@@ -63,3 +63,39 @@ def getFtpConfig():
 	cfg['server'] = config['ftp']['server']
 	cfg['targetDir'] = config['ftp']['targetDir']
 	return cfg
+
+
+
+def getDbName(mode='test'):
+	global config
+	if mode == 'production':
+		return config['database']['name']
+	else:
+		return config['testdatabase']['name']
+
+
+
+def getDbHost(mode='test'):
+	global config
+	if mode == 'production':
+		return config['database']['host']
+	else:
+		return config['testdatabase']['host']
+
+
+
+def getDbUser(mode='test'):
+	global config
+	if mode == 'production':
+		return config['database']['username']
+	else:
+		return config['testdatabase']['username']
+
+
+
+def getDbPassword(mode='test'):
+	global config
+	if mode == 'production':
+		return config['database']['password']
+	else:
+		return config['testdatabase']['password']

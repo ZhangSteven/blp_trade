@@ -114,17 +114,16 @@ def addRemoveHeader(lines):
 
 
 
-def filterTrades(lines, skipKeys):
+def filterTrades(lines):
 	"""
-	[List] lines, [List] skipKeys => [bytes] XML content (string encoded with 
-															utf-8)
+	[List] lines => A tuple consisting of the below:
+		[byte string] XML content (string encoded with utf-8)
+		[List] key value (String) of trades extracted
+		[List] key value (String) of trade deletions extracted
 
-	The function searches for trades with the right portfolio id and
-	extract those trades out, the result is returned as an XML string. 
-	As a side effect, it saves the list of key values of those trades.
-
-	During the search, if the key value of a trade found is in the list
-	of skipKeys, then the trade won't be extracted.
+	The function searches for trades with the right portfolio id, as well
+	as deletions of previous trades and extract those out, then create an
+	XML string consisting of the above.
 
 	The format of the input XML is as below:
 
@@ -142,17 +141,13 @@ def filterTrades(lines, skipKeys):
 
 	Where "XXX_New" is the trade type, such as "Buy_New", "Sell_New", etc. 
 	
-	Note that trade cancellations won't be captured, because cancellation
-	takes the below form:
+	A trade deletion takes the following form:
 
 	<XXX_delete>
 		<KeyValue>XXXXXXX</KeyValue>
 	</XXX_delete>
 
 	Where "XXX" is the trade type, such as "Sell", "CoverShort", etc.
-
-	For trade corrections, since a correction is just cancellation + new
-	trade, only the new trade part will be captured.
 	"""
 	root = ET.fromstringlist(lines)
 	newRoot = ET.Element('TransactionRecords')
@@ -173,6 +168,16 @@ def filterTrades(lines, skipKeys):
 
 	# generate XML as an utf-8 encoded byte string
 	return ET.tostring(newRoot, encoding='utf-8', method='xml', short_empty_elements=True)
+
+
+	Maybe we consider this:
+
+	filter(tradeTransferred, filter(trade, ...))
+
+	filter(deletionTransferred, filter(deletion, ...))
+
+	
+
 
 
 
