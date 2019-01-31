@@ -36,7 +36,8 @@ def lookupTrade(keyValue):
 
 def lookupDeletion(keyValue):
 	"""
-	Use the deletion key value to determine whether it is in database.
+	Use the deletion key value to determine whether a trade exists in DB, but
+	deletion flag is set.
 	"""
 	with getConnection().cursor() as cursor:
 		try:
@@ -50,6 +51,26 @@ def lookupDeletion(keyValue):
 
 		except:
 			logger.exception('lookupDeletion(): ')
+
+
+
+def lookupTradesWithoutDeletion(keyValue):
+	"""
+	Use the deletion key value to determine whether a trade exists in DB, but
+	deletion flag is not set.
+	"""
+	with getConnection().cursor() as cursor:
+		try:
+			sql = "SELECT deleted FROM trade WHERE key_value='{0}'".format(keyValue)
+			cursor.execute(sql)
+			row = cursor.fetchone()
+			if row != None and row['deleted'] == 0:	# of type TINYINT
+				return True
+			else:
+				return False
+
+		except:
+			logger.exception('lookupTradesWithoutDeletion(): ')
 
 
 

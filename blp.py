@@ -13,7 +13,7 @@ from blp_trade.utility import get_current_path, get_input_directory, \
 								get_portfolio_id
 from blp_trade.db import lookupTrade, lookupDeletion, setDatabaseMode, \
 								clearTestDatabase, saveToDB, \
-								closeConnection
+								closeConnection, lookupTradesWithoutDeletion
 from os.path import join
 from datetime import datetime
 from functools import reduce
@@ -152,6 +152,20 @@ def deletionInDB(transaction):
 	key = transaction.find('KeyValue')
 	if key != None:
 		return lookupDeletion(key.text)
+	else:
+		return False
+
+
+
+def deletionForTradesInDB(transaction):
+	"""
+	[ET node] transaction => [Bool] yesno
+
+	determine whether a trade deletion is already in DB using its key value.
+	"""
+	key = transaction.find('KeyValue')
+	if key != None:
+		return lookupTradesWithoutDeletion(key.text)
 	else:
 		return False
 
@@ -298,7 +312,7 @@ def forPreviousTrades(tradeKeys, transaction):
 
 	Determine whether the transaction's keyValue is in tradeKeys or in database.
 	"""
-	def deletionForTrades(tradeKeys, transaction):
+	def deletionForCurrentTrades(tradeKeys, transaction):
 		keyValue = transaction.find('KeyValue')
 		if keyValue != None and keyValue.text in tradeKeys:
 			return True
@@ -306,7 +320,8 @@ def forPreviousTrades(tradeKeys, transaction):
 			return False
 	
 
-	if deletionForTrades(tradeKeys, transaction) or deletionInDB(transaction):
+	if deletionForCurrentTrades(tradeKeys, transaction) or \
+		deletionForTradesInDB(transaction):
 		return True
 	else:
 		return False
