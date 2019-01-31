@@ -38,7 +38,7 @@ if __name__ == '__main__':
 	1. Test mode: the default mode. In this case, it reads an XML file in local
 		directory, run as below:
 
-		$ python get_others.py <file name>
+		$ python get_others.py --file <file name>
 
 		NOTE: no database involvement in this mode
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
 	import argparse
 	parser = argparse.ArgumentParser()
-	parser.add_argument('file', metavar='input file', type=str)
+	parser.add_argument('--file', nargs='?', metavar='input file', type=str)
 	parser.add_argument('--mode', nargs='?', metavar='mode', default='test')
 	args = parser.parse_args()
 

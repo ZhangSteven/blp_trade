@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
 	To run it in command line (test mode), do
 
-		python get_trade.py <file>
+		python get_trade.py --file <file>
 
 		NOTE: no database involvement in this mode
 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
 	import argparse
 	parser = argparse.ArgumentParser()
-	parser.add_argument('file', metavar='input file', type=str)
+	parser.add_argument('--file', nargs='?', metavar='input file', type=str)
 	parser.add_argument('--mode', nargs='?', metavar='mode', default='test')
 	args = parser.parse_args()
 
