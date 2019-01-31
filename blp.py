@@ -11,8 +11,9 @@
 import xml.etree.ElementTree as ET
 from blp_trade.utility import get_current_path, get_input_directory, \
 								get_portfolio_id
-from blp_trade.db import tradeInDB, deletionInDB, setDatabaseMode, \
-								clearTestDatabase, saveToDB
+from blp_trade.db import lookupTrade, lookupDeletion, setDatabaseMode, \
+								clearTestDatabase, saveToDB, \
+								closeConnection
 from os.path import join
 from datetime import datetime
 from functools import reduce
@@ -28,8 +29,13 @@ class KeyValueNotFound(Exception):
 
 def extractTradesToXML(inputFile, outputFile):
 	"""
-	[String] input file, [String] output file => extract Trades with the right
-	portfolio id and write those trades to the output file in XML format.
+	[String] input file, [String] output file => No direct output,
+
+	Side effects:
+	1. Create an output XML file with trades and deletions extracted from the 
+		input XML file.
+
+	2. Save the key values of trades or deletions into the database.
 
 	When extractTradesToXML() is called multiple times in a day, trades in its
 	output XML files won't overlap because it saves key values of trades, and
@@ -49,19 +55,16 @@ def extractTradesToXML(inputFile, outputFile):
 def extractOtherToXML(inputFile, outputFile):
 	"""
 	[String] input file, [String] output file => extract everything except 
-	trades with the right portfolio id and write to the output file in XML 
-	format.
+	trades or deletions saved in database.
 	"""
 	logger.info('extractOtherToXML(): input {0}'.format(inputFile))
 	writeXMLFile(
-		inverseFilterTrades(
-			addRemoveHeader(
-				fileToLines(
-					inputFile
-				)
-			)
-		)
-		, outputFile
+		ET.tostring(filterOthers(addRemoveHeader(fileToLines(inputFile)))
+					, encoding='utf-8'
+					, method='xml'
+					, short_empty_elements=True
+					)
+	   , outputFile
 	)
 
 
@@ -140,6 +143,34 @@ def isDeletion(transaction):
 
 
 
+def deletionInDB(transaction):
+	"""
+	[ET node] transaction => [Bool] yesno
+
+	determine whether a trade deletion is already in DB using its key value.
+	"""
+	key = transaction.find('KeyValue')
+	if key != None:
+		return lookupDeletion(key.text)
+	else:
+		return False
+
+
+
+def tradeInDB(transaction):
+	"""
+	[ET node] transaction => [Bool] yesno
+
+	determine whether a trade is already in DB using its key value.
+	"""
+	key = transaction.find('KeyValue')
+	if key != None:
+		return lookupTrade(key.text)
+	else:
+		return False
+
+
+
 def filterTrades(lines):
 	"""
 	[List] lines => A tuple consisting of the below:
@@ -177,10 +208,10 @@ def filterTrades(lines):
 	"""
 	def buildResult(result, transaction):
 		newRoot, tradeKeys, deletionKeys = result
-		if isRightTrade(transaction) and not tradeInDB(transaction.tag):
+		if isRightTrade(transaction) and not tradeInDB(transaction):
 			newRoot.append(transaction)
 			tradeKeys.append(transaction.find('KeyValue').text)
-		elif isDeletion(transaction) and not deletionInDB(transaction.tag) \
+		elif isDeletion(transaction) and not deletionInDB(transaction) \
 			and forPreviousTrades(tradeKeys, transaction):
 			newRoot.append(transaction)
 			deletionKeys.append(transaction.find('KeyValue').text)
@@ -195,23 +226,27 @@ def filterTrades(lines):
 
 
 
-def filterOtherTrades(lines):
+def filterOthers(lines):
 	"""
 	[List] lines => [bytes] XML content (string encoded with utf-8)
 
-	It's the opposite of filterTrades(), it keeps out those trades with the
-	right portfolio id, the rest will be 
+	It's the opposite of filterTrades(), it filters out everything else except
+	those trades or deletions already saved into the database. 
 	"""
-	# def buildResult(newRoot, transaction):
-	pass
+	def buildResult(newRoot, transaction):
+		if isTrade(transaction) and tradeInDB(transaction):
+			pass 	# no change
+		elif isDeletion(transaction) and deletionInDB(transaction):
+			pass 	# no change
+		else:
+			newRoot.append(transaction)
+
+		return newRoot
 
 
-
-
-
-	# return reduce(buildResult
-	# 			  , ET.fromstringlist(lines)
-	# 			  , ET.Element('TransactionRecords'))
+	return reduce(buildResult
+				  , ET.fromstringlist(lines)
+				  , ET.Element('TransactionRecords'))
 
 
 
@@ -263,8 +298,15 @@ def forPreviousTrades(tradeKeys, transaction):
 
 	Determine whether the transaction's keyValue is in tradeKeys or in database.
 	"""
-	keyValue = transaction.find('KeyValue')
-	if keyValue != None and (keyValue.text in tradeKeys or deletionInDB(keyValue.text)):
+	def deletionForTrades(tradeKeys, transaction):
+		keyValue = transaction.find('KeyValue')
+		if keyValue != None and keyValue.text in tradeKeys:
+			return True
+		else:
+			return False
+	
+
+	if deletionForTrades(tradeKeys, transaction) or deletionInDB(transaction):
 		return True
 	else:
 		return False
@@ -289,4 +331,6 @@ if __name__ == '__main__':
 	setDatabaseMode('test')
 	clearTestDatabase()
 
-	extractTradesToXML(args.file, 'output_' + args.file)
+	extractTradesToXML(args.file, 'trades_' + args.file)
+	extractOtherToXML(args.file, 'others_' + args.file)
+	closeConnection()

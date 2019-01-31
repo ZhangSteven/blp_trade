@@ -15,7 +15,7 @@ class InvalidDBOperation(Exception):
 
 
 
-def tradeInDB(keyValue):
+def lookupTrade(keyValue):
 	"""
 	Use the trade key value to determine whether it is in database.
 	"""
@@ -30,11 +30,11 @@ def tradeInDB(keyValue):
 				return False
 
 		except:
-			logger.exception('tradeInDB(): ')
+			logger.exception('lookupTrade(): ')
 
 
 
-def deletionInDB(keyValue):
+def lookupDeletion(keyValue):
 	"""
 	Use the deletion key value to determine whether it is in database.
 	"""
@@ -43,13 +43,13 @@ def deletionInDB(keyValue):
 			sql = "SELECT deleted FROM trade WHERE key_value='{0}'".format(keyValue)
 			cursor.execute(sql)
 			row = cursor.fetchone()
-			if row != None and row['deleted'] == '1':
+			if row != None and row['deleted'] == 1:	# of type TINYINT
 				return True
 			else:
 				return False
 
 		except:
-			logger.exception('deletionInDB(): ')
+			logger.exception('lookupDeletion(): ')
 
 
 
