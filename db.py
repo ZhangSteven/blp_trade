@@ -94,43 +94,6 @@ def saveDeletions(deletionKeys):
 			logger.exception('saveDeletions(): ')
 
 
-# def saveResultsToDB(directory, resultList):
-# 	"""
-# 	input: [String] directory, [Iterable] resultList
-# 	output: save the results into database
-
-# 	where directory is the directory containing the files, and resultList
-# 	is a list of tuple (file, status), status is either 0 or 1.
-# 	"""
-# 	def toDBRecord(result):
-# 		"""
-# 		([String] file, [Int] status) => 
-# 			([String] file, [String] datetime, [String] status)
-# 		"""
-# 		file, status, _, _ = result
-# 		return (file
-# 				, strftime('%Y-%m-%d %H:%M:%S', localtime(getmtime(join(directory, file))))
-# 				, str(status))
-
-# 	# we need to convert to list first and tell whether it's empty because
-# 	# emtpy list will cause cursor.executemany() to fail
-# 	records = list(map(toDBRecord, resultList))
-# 	if records == []:
-# 		logger.debug('saveResultsToDB(): no records to save')
-# 		return
-
-
-# 	try:
-# 		with connection.cursor() as cursor:
-# 			sql = "REPLACE INTO file (file_name, last_modified, status) \
-# 					VALUES (%s, %s, %s)"
-# 			cursor.executemany(sql, records)
-
-# 			# save changes
-# 			connection.commit()
-
-# 	except:
-# 		logger.exception('saveResultsToDB(): ')
 
 mode = 'test'	# default is test mode
 def setDatabaseMode(m):
@@ -212,23 +175,3 @@ if __name__ == '__main__':
 	setDatabaseMode('test')
 	clearTestDatabase();
 	closeConnection()
-
-# 	# Works
-# 	# try:
-# 	# 	with connection.cursor() as cursor:
-# 	# 		# create a new record
-# 	# 		sql = "INSERT INTO `trade_file` (`file_name`, `last_modified`, `status`) \
-# 	# 				VALUES (%s, %s, %s)"
-# 	# 		cursor.execute(sql, ('Trade File 20190117.xlsx'
-# 	# 							, '2019-01-20 10:05:22'
-# 	# 							, '0')
-# 	# 						)
-
-# 	# 		# save changes
-# 	# 		connection.commit()
-
-# 	# finally:
-# 	# 	connection.close()
-
-# 	print(lookupLastModifiedTime('Trade File 20190116.xlsx'))
-# 	closeConnection()

@@ -32,21 +32,17 @@ def extractTradesToXML(inputFile, outputFile):
 	portfolio id and write those trades to the output file in XML format.
 
 	When extractTradesToXML() is called multiple times in a day, trades in its
-	output XML files won't overlap because it saves key values of trades extracted
-	to a key value file.	  
+	output XML files won't overlap because it saves key values of trades, and
+	deletions into database.	  
 	"""
 	logger.info('extractTradesToXML(): input {0}'.format(inputFile))
+	docRoot, tradeKeys, deletionKeys = filterTrades(addRemoveHeader(fileToLines(inputFile)))
+
 	writeXMLFile(
-		filterTrades(
-			addRemoveHeader(
-				fileToLines(
-					inputFile
-				)
-			)
-			, loadKeys()
-		)
+		ET.tostring(docRoot, encoding='utf-8', method='xml', short_empty_elements=True)
 		, outputFile
 	)
+	saveToDB(tradeKeys, deletionKeys)
 
 
 
@@ -270,57 +266,6 @@ def forPreviousTrades(tradeKeys, transaction):
 
 
 
-def saveKeys(keyList):
-	"""
-	[List] key list => write the list of keys (string) to a text file.
-	"""
-	if keyList == []:
-		return
-
-	with open(getFilename(), 'a') as textFile:
-		for key in keyList:
-			print('{0}'.format(key), file=textFile)
-
-
-
-def loadKeys():
-	"""
-	Read a text file => [List] keys
-	"""
-	try:
-		textFile = open(getFilename(), 'r')
-		return [line.strip() for line in textFile]
-	except FileNotFoundError:
-		return []
-
-
-
-def getFilename():
-	"""
-	return the text file name for today.
-
-	Text files storing keys are stored and named as:
-
-	keyFiles/keys_yyyymmdd.txt
-	"""
-	return join(get_current_path(), 'keyFiles', 
-				'keys_' + datetime.today().strftime('%Y%m%d') + '.txt')
-
-
-
-def deleteKeyFile():
-	"""
-	Delete the key file keys_yyyymmdd.txt (today's date) in the keyFiles folder.
-
-	For testing purpose only.
-	"""
-	import os
-	try:
-		os.remove(getFilename())
-	except FileNotFoundError:
-		pass	# ignore
-
-
 
 if __name__ == '__main__':
 	import logging.config
@@ -339,33 +284,4 @@ if __name__ == '__main__':
 	setDatabaseMode('test')
 	clearTestDatabase()
 
-	newRoot, tradeKeys, deletionKeys = filterTrades(addRemoveHeader(fileToLines(join(get_current_path(), args.file))))
-	writeXMLFile(
-		ET.tostring(newRoot, encoding='utf-8', method='xml', short_empty_elements=True)
-		, 'output_' + args.file
-	)
-	saveToDB(tradeKeys, deletionKeys)
-
-
-	# extractTradesToXML(
-	# 	join(get_input_directory()
-	# 		, 'TransToGeneva20181031_morning.xml'
-	# 	)
-	# 	, 'output.xml'
-	# )
-
-	# extractTradesToXML(
-	# 	join(get_input_directory()
-	# 		, 'TransToGeneva20181031_night.xml'
-	# 	)
-	# 	, 'output2.xml'
-	# )
-
-	# extractOtherToXML(
-	# 	join(get_input_directory()
-	# 		, 'TransToGeneva20181031_night.xml'
-	# 	)
-	# 	, 'output3.xml'
-	# )
-
-	# deleteKeyFile()		# so that subsequent runs can still generate output
+	extractTradesToXML(args.file, 'output_' + args.file)
