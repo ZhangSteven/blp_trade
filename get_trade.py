@@ -3,6 +3,7 @@
 
 from blp_trade.blp import extractTradesToXML
 from blp_trade.utility import get_current_path, get_input_directory, getFtpConfig
+from blp_trade.db import setDatabaseMode, clearTestDatabase, closeConnection
 from utils.sftp import upload
 from os.path import join
 from datetime import datetime
@@ -50,7 +51,13 @@ if __name__ == '__main__':
 
 	The above will run test files and won't do ftp upload.
 
-	To run it in production model, do:
+	To run it in command line (test mode), do
+
+		python get_trade.py <file>
+
+		NOTE: no database involvement in this mode
+
+	To run it in production mode, do
 
 		python get_trade.py --mode production
 
@@ -64,13 +71,15 @@ if __name__ == '__main__':
 
 	import argparse
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--file', nargs='?', metavar='input file', type=str)
+	parser.add_argument('file', metavar='input file', type=str)
 	parser.add_argument('--mode', nargs='?', metavar='mode', default='test')
 	args = parser.parse_args()
 
+	setDatabaseMode(args.mode)
 	if args.mode == 'production':
 		inputFile = inputFile()
 	else:
+		clearTestDatabase()	# clear test database so we can start from fresh
 		inputFile = join(get_current_path(), args.file)
 
 	try:
@@ -81,6 +90,9 @@ if __name__ == '__main__':
 
 	except:
 		logger.exception('Error')
+
+	finally:
+		closeConnection()
 	
 
 

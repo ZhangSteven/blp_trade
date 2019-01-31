@@ -248,7 +248,9 @@ def filterOthers(lines):
 	those trades or deletions already saved into the database. 
 	"""
 	def buildResult(newRoot, transaction):
-		if isTrade(transaction) and tradeInDB(transaction):
+		if isRightTrade(transaction):
+			pass
+		elif isTrade(transaction) and tradeInDB(transaction):
 			pass 	# no change
 		elif isDeletion(transaction) and deletionInDB(transaction):
 			pass 	# no change
@@ -346,6 +348,11 @@ if __name__ == '__main__':
 	setDatabaseMode('test')
 	clearTestDatabase()
 
-	extractTradesToXML(args.file, 'trades_' + args.file)
-	extractOtherToXML(args.file, 'others_' + args.file)
-	closeConnection()
+	try:
+		extractTradesToXML(args.file, 'trades_' + args.file)
+		extractOtherToXML(args.file, 'others_' + args.file)
+	except:
+		logger.exception('blp.py')
+
+	finally:
+		closeConnection()

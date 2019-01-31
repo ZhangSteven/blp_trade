@@ -4,6 +4,7 @@
 from blp_trade.blp import extractOtherToXML
 from blp_trade.utility import get_current_path, get_input_directory
 from blp_trade.get_trade import doUpload, getDateString
+from blp_trade.db import setDatabaseMode, clearTestDatabase, closeConnection
 from os.path import join
 from datetime import datetime
 import logging
@@ -37,7 +38,9 @@ if __name__ == '__main__':
 	1. Test mode: the default mode. In this case, it reads an XML file in local
 		directory, run as below:
 
-		$ python get_others.py --file <file name>
+		$ python get_others.py <file name>
+
+		NOTE: no database involvement in this mode
 
 	2. Production mode: It reads an XML from a preconfigured directory and the
 		file name is based on the date. The output file will be uploaded to
@@ -50,13 +53,15 @@ if __name__ == '__main__':
 
 	import argparse
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--file', nargs='?', metavar='input file', type=str)
+	parser.add_argument('file', metavar='input file', type=str)
 	parser.add_argument('--mode', nargs='?', metavar='mode', default='test')
 	args = parser.parse_args()
 
+	setDatabaseMode(args.mode)
 	if args.mode == 'production':
 		inputFile = inputFile()
 	else:
+		clearTestDatabase()	# clear test database so we can start from fresh
 		inputFile = join(get_current_path(), args.file)
 
 	try:
@@ -67,3 +72,6 @@ if __name__ == '__main__':
 	
 	except:
 		logger.exception('Error')
+
+	finally:
+		closeConnection()
