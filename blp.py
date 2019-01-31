@@ -11,7 +11,8 @@
 import xml.etree.ElementTree as ET
 from blp_trade.utility import get_current_path, get_input_directory, \
 								get_portfolio_id
-from blp_trade.db import tradeInDB, deletionInDB
+from blp_trade.db import tradeInDB, deletionInDB, setDatabaseMode, \
+								clearTestDatabase, saveToDB
 from os.path import join
 from datetime import datetime
 from functools import reduce
@@ -330,11 +331,20 @@ if __name__ == '__main__':
 	parser.add_argument('file', metavar='input file', type=str)
 	args = parser.parse_args()
 
+	#########################################################
+	# IMPORTANT! 
+	#
+	# Set database mode to 'test' when doing command line
+	#########################################################
+	setDatabaseMode('test')
+	clearTestDatabase()
+
 	newRoot, tradeKeys, deletionKeys = filterTrades(addRemoveHeader(fileToLines(join(get_current_path(), args.file))))
 	writeXMLFile(
 		ET.tostring(newRoot, encoding='utf-8', method='xml', short_empty_elements=True)
 		, 'output_' + args.file
 	)
+	saveToDB(tradeKeys, deletionKeys)
 
 
 	# extractTradesToXML(

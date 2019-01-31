@@ -19,7 +19,18 @@ def tradeInDB(keyValue):
 	"""
 	Use the trade key value to determine whether it is in database.
 	"""
-	return False
+	with getConnection().cursor() as cursor:
+		try:
+			sql = "SELECT key_value FROM trade WHERE key_value='{0}'".format(keyValue)
+			cursor.execute(sql)
+			row = cursor.fetchone()
+			if row != None:	# found
+				return True
+			else:
+				return False
+
+		except:
+			logger.exception('tradeInDB(): ')
 
 
 
@@ -27,32 +38,60 @@ def deletionInDB(keyValue):
 	"""
 	Use the deletion key value to determine whether it is in database.
 	"""
-	return False	
+	with getConnection().cursor() as cursor:
+		try:
+			sql = "SELECT deleted FROM trade WHERE key_value='{0}'".format(keyValue)
+			cursor.execute(sql)
+			row = cursor.fetchone()
+			if row != None and row['deleted'] == '1':
+				return True
+			else:
+				return False
+
+		except:
+			logger.exception('deletionInDB(): ')
 
 
 
+def saveToDB(tradeKeys, deletionKeys):
+	saveTrades(tradeKeys)
+	saveDeletions(deletionKeys)
 
 
-# def lookupLastModifiedTime(file):
-# 	"""
-# 	[String] file => [Datetime] last modified time of file in DB.
 
-# 	if lookup does not find any record in database, return None
-# 	"""
-# 	try:
-# 		with getConnection().cursor() as cursor:
-# 			sql = "SELECT last_modified FROM file WHERE file_name='{0}'".format(file)
-# 			cursor.execute(sql)
-# 			row = cursor.fetchone()
-# 			if row == None:
-# 				logger.debug('lookupLastModifiedTime(): {0} not found'.format(file))
-# 				return None
-# 			else:
-# 				return row['last_modified']
+def saveTrades(tradeKeys):
+	"""
+	[List] tradeKeys
 
-# 	except:
-# 		logger.exception('lookupLastModifiedTime(): ')
+	save the list of keys of new trades into the database
+	"""
+	with getConnection().cursor() as cursor:
+		try:
+			sql = "INSERT INTO trade (key_value, deleted) VALUES (%s, '0')"
+			cursor.executemany(sql, tradeKeys)
+			connection.commit()
 
+		except:
+			logger.exception('saveTrades(): ')
+
+
+
+def saveDeletions(deletionKeys):
+	"""
+	[List] deletionKeys
+
+	save the list of keys of deletions into the database. Because a deletion is
+	only valid if that trade key value is already in the database, therefore
+	we use UPDATE here.
+	"""
+	with getConnection().cursor() as cursor:
+		try:
+			sql = "UPDATE trade SET deleted = '1' WHERE key_value = (%s)"
+			cursor.executemany(sql, deletionKeys)
+			connection.commit()
+
+		except:
+			logger.exception('saveDeletions(): ')
 
 
 # def saveResultsToDB(directory, resultList):
