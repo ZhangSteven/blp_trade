@@ -151,26 +151,6 @@ def filterTrades(lines):
 
 	Where "XXX" is the trade type, such as "Sell", "CoverShort", etc.
 	"""
-	# root = ET.fromstringlist(lines)
-	# newRoot = ET.Element('TransactionRecords')
-	# keyList = []
-	# for transaction in root:
-	# 	portfolio = transaction.find('Portfolio')
-	# 	if portfolio != None and isRightPortfolio(portfolio.text):
-	# 		try:
-	# 			keyValue = transaction.find('KeyValue').text
-	# 			if not keyValue in skipKeys:
-	# 				keyList.append(keyValue)
-	# 				newRoot.append(transaction)
-	# 		except:
-	# 			raise KeyValueNotFound()
-
-	# # save the transaction keys to somewhere (text file)
-	# saveKeys(keyList)
-
-	# # generate XML as an utf-8 encoded byte string
-	# return ET.tostring(newRoot, encoding='utf-8', method='xml', short_empty_elements=True)
-
 	def isTrade(transaction):
 		""" tell whether a transaction node is a trade of portfolio 40006 """
 		# if transaction.tag in ['Buy_New', 'Sell_New', 'SellShort_New', \
@@ -208,7 +188,6 @@ def filterTrades(lines):
 			newRoot.append(transaction)
 			deletionKeys.append(transaction.find('KeyValue').text)
 
-		# print (tradeKeys, deletionKeys)
 		return (newRoot, tradeKeys, deletionKeys)
 
 

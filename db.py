@@ -10,6 +10,11 @@ logger = logging.getLogger(__name__)
 
 
 
+class InvalidDBOperation(Exception):
+	pass
+
+
+
 def tradeInDB(keyValue):
 	"""
 	Use the trade key value to determine whether it is in database.
@@ -23,6 +28,8 @@ def deletionInDB(keyValue):
 	Use the deletion key value to determine whether it is in database.
 	"""
 	return False	
+
+
 
 
 
@@ -86,33 +93,86 @@ def deletionInDB(keyValue):
 # 	except:
 # 		logger.exception('saveResultsToDB(): ')
 
-
-
-# connection = None
-# def getConnection():
-# 	global connection
-# 	if connection == None:
-# 		logger.info('getConnection(): establish DB connection')
-# 		connection = pymysql.connect(host=getDbHost(),
-# 									user=getDbUser(),
-# 									password=getDbPassword(),
-# 									db=getDbName(),
-# 									cursorclass=pymysql.cursors.DictCursor)
-# 	return connection
+mode = 'test'	# default is test mode
+def setDatabaseMode(m):
+	"""
+	Different mode determines which data base to connect (test or production)
+	"""
+	global mode
+	mode = m
 
 
 
-# def closeConnection():
-# 	global connection
-# 	if connection != None:
-# 		logger.info('DB connection closed')
-# 		connection.close()
+connection = None
+def getConnection():
+	global connection
+	if connection == None:
+		global mode
+		connection = initializeConnection(mode)
+		
+	return connection
 
 
 
-# if __name__ == '__main__':
-# 	import logging.config
-# 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
+def initializeConnection(mode):
+	if mode == 'production':
+		logger.info('getConnection(): establish DB connection, production mode')
+		return pymysql.connect(host=getDbHost('production'),
+									user=getDbUser('production'),
+									password=getDbPassword('production'),
+									db=getDbName('production'),
+									cursorclass=pymysql.cursors.DictCursor)
+
+	else:
+		logger.info('getConnection(): establish DB connection, test mode')
+		return pymysql.connect(host=getDbHost('test'),
+									user=getDbUser('test'),
+									password=getDbPassword('test'),
+									db=getDbName('test'),
+									cursorclass=pymysql.cursors.DictCursor)
+
+
+
+def clearTestDatabase():
+	"""
+	Delete all contents in test database.
+
+	This function is for unit test purpose only, it should NEVER be called in
+	production mode.
+	"""
+	global mode
+	if mode == 'production':
+		raise InvalidDBOperation()
+
+
+	try:
+		with getConnection().cursor() as cursor:
+			sql = "DELETE FROM trade"
+			cursor.execute(sql)
+
+			# save changes
+			getConnection().commit()
+
+	except:
+		logger.exception('clearTestDatabase(): ')
+
+
+
+def closeConnection():
+	global connection
+	if connection != None:
+		logger.info('DB connection closed')
+		connection.close()
+
+
+
+if __name__ == '__main__':
+	import logging.config
+	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
+	
+	setDatabaseMode('test')
+	clearTestDatabase();
+	closeConnection()
 
 # 	# Works
 # 	# try:
