@@ -11,8 +11,10 @@
 import xml.etree.ElementTree as ET
 from blp_trade.utility import get_current_path, get_input_directory, \
 								get_portfolio_id
+from blp_trade.db import tradeInDB, deletionInDB
 from os.path import join
 from datetime import datetime
+from functools import reduce
 import logging
 logger = logging.getLogger(__name__)
 
@@ -118,8 +120,8 @@ def filterTrades(lines):
 	"""
 	[List] lines => A tuple consisting of the below:
 		[byte string] XML content (string encoded with utf-8)
-		[List] key value (String) of trades extracted
-		[List] key value (String) of trade deletions extracted
+		[List] trade key values (String) of trades extracted
+		[List] deleted trade key values (String) of trade deletions extracted
 
 	The function searches for trades with the right portfolio id, as well
 	as deletions of previous trades and extract those out, then create an
@@ -149,35 +151,81 @@ def filterTrades(lines):
 
 	Where "XXX" is the trade type, such as "Sell", "CoverShort", etc.
 	"""
+	# root = ET.fromstringlist(lines)
+	# newRoot = ET.Element('TransactionRecords')
+	# keyList = []
+	# for transaction in root:
+	# 	portfolio = transaction.find('Portfolio')
+	# 	if portfolio != None and isRightPortfolio(portfolio.text):
+	# 		try:
+	# 			keyValue = transaction.find('KeyValue').text
+	# 			if not keyValue in skipKeys:
+	# 				keyList.append(keyValue)
+	# 				newRoot.append(transaction)
+	# 		except:
+	# 			raise KeyValueNotFound()
+
+	# # save the transaction keys to somewhere (text file)
+	# saveKeys(keyList)
+
+	# # generate XML as an utf-8 encoded byte string
+	# return ET.tostring(newRoot, encoding='utf-8', method='xml', short_empty_elements=True)
+
+	def isTrade(transaction):
+		""" tell whether a transaction node is a trade of portfolio 40006 """
+		# if transaction.tag in ['Buy_New', 'Sell_New', 'SellShort_New', \
+		# 	'CoverShort_New'] and transaction.find('Portfolio') and \
+		# 	isRightPortfolio(transaction.find('Portfolio').text):
+		if transaction.tag in ['Buy_New', 'Sell_New', 'SellShort_New', \
+			'CoverShort_New'] and isRightPortfolio(transaction):
+			return True
+		else:
+			return False
+
+
+	def isDeletion(transaction):
+		""" tell whether a transaction node is a trade deletion """
+		if transaction.tag in ['Buy_Delete', 'Sell_Delete', 'SellShort_Delete', 'CoverShort_Delete']:
+			return True
+		else:
+			return False
+
+
 	root = ET.fromstringlist(lines)
-	newRoot = ET.Element('TransactionRecords')
-	keyList = []
-	for transaction in root:
-		portfolio = transaction.find('Portfolio')
-		if portfolio != None and isRightPortfolio(portfolio.text):
-			try:
-				keyValue = transaction.find('KeyValue').text
-				if not keyValue in skipKeys:
-					keyList.append(keyValue)
-					newRoot.append(transaction)
-			except:
-				raise KeyValueNotFound()
+	# for transaction in root:
+	# 	print(transaction.tag)
 
-	# save the transaction keys to somewhere (text file)
-	saveKeys(keyList)
+	# filter(tradeTransferred, filter(trade, ...))
+	# filter(deletionTransferred, filter(deletion, ...))
 
-	# generate XML as an utf-8 encoded byte string
-	return ET.tostring(newRoot, encoding='utf-8', method='xml', short_empty_elements=True)
+	def buildResult(result, transaction):
+		newRoot, tradeKeys, deletionKeys = result
+		print(transaction.tag)
+		if isTrade(transaction) and not tradeInDB(transaction.tag):
+			newRoot.append(transaction)
+			tradeKeys.append(transaction.find('KeyValue').text)
+		elif isDeletion(transaction) and not deletionInDB(transaction.tag) \
+			and forPreviousTrades(tradeKeys, transaction.tag):
+			newRoot.append(transaction)
+			deletionKeys.append(transaction.find('KeyValue').text)
+
+		return (newRoot, tradeKeys, deletionKeys)
 
 
-	Maybe we consider this:
+	return reduce(buildResult, root, (ET.Element('TransactionRecords'), [], []))
 
-	filter(tradeTransferred, filter(trade, ...))
 
-	filter(deletionTransferred, filter(deletion, ...))
 
-	
+def forPreviousTrades(tradeKeys, keyValue):
+	"""
+	[List] tradeKeys, [String] keyValue => [Bool] yesno
 
+	Determine whether a deletion keyValue is in tradeKeys or in database.
+	"""
+	if keyValue in tradeKeys or deletionInDB(keyValue):
+		return True
+	else:
+		return False
 
 
 
@@ -214,13 +262,34 @@ def writeXMLFile(content, filename='output.xml'):
 
 
 
-def isRightPortfolio(portId):
-	"""
-	[String] portId => [Bool] yesno
+# def isRightPortfolio(portId):
+# 	"""
+# 	[String] portId => [Bool] yesno
 
-	Determine whether the portfolio id is of interest.
+# 	Determine whether the portfolio id is of interest.
+# 	"""
+# 	if portId.startswith(get_portfolio_id()):
+# 		return True
+# 	else:
+# 		return False
+
+
+
+def isRightPortfolio(node):
 	"""
-	if portId.startswith(get_portfolio_id()):
+	[ET node] node => [Bool] yesno
+
+	the node looks like follows:
+
+	<SellShort_New>
+		<Portfolio>40006-C</Portfolio>
+		...
+	</SellShort_New>
+
+	We need to find out whether the "Portfolio" matches what we look for.
+	"""
+	portfolio = node.find('Portfolio')
+	if portfolio != None and portfolio.text.startswith(get_portfolio_id()):
 		return True
 	else:
 		return False
@@ -283,25 +352,37 @@ if __name__ == '__main__':
 	import logging.config
 	logging.config.fileConfig('logging.config', disable_existing_loggers=False)
 
-	extractTradesToXML(
-		join(get_input_directory()
-			, 'TransToGeneva20181031_morning.xml'
-		)
-		, 'output.xml'
+	import argparse
+	parser = argparse.ArgumentParser()
+	parser.add_argument('file', metavar='input file', type=str)
+	args = parser.parse_args()
+
+	newRoot, tradeKeys, deletionKeys = filterTrades(addRemoveHeader(fileToLines(join(get_current_path(), args.file))))
+	writeXMLFile(
+		ET.tostring(newRoot, encoding='utf-8', method='xml', short_empty_elements=True)
+		, 'output_' + args.file
 	)
 
-	extractTradesToXML(
-		join(get_input_directory()
-			, 'TransToGeneva20181031_night.xml'
-		)
-		, 'output2.xml'
-	)
 
-	extractOtherToXML(
-		join(get_input_directory()
-			, 'TransToGeneva20181031_night.xml'
-		)
-		, 'output3.xml'
-	)
+	# extractTradesToXML(
+	# 	join(get_input_directory()
+	# 		, 'TransToGeneva20181031_morning.xml'
+	# 	)
+	# 	, 'output.xml'
+	# )
 
-	deleteKeyFile()		# so that subsequent runs can still generate output
+	# extractTradesToXML(
+	# 	join(get_input_directory()
+	# 		, 'TransToGeneva20181031_night.xml'
+	# 	)
+	# 	, 'output2.xml'
+	# )
+
+	# extractOtherToXML(
+	# 	join(get_input_directory()
+	# 		, 'TransToGeneva20181031_night.xml'
+	# 	)
+	# 	, 'output3.xml'
+	# )
+
+	# deleteKeyFile()		# so that subsequent runs can still generate output
