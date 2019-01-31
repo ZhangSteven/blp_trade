@@ -113,6 +113,33 @@ def addRemoveHeader(lines):
 
 
 
+def isRightTrade(transaction):
+	""" tell whether a transaction node is a trade of right portfolio """
+	if isTrade(transaction) and isRightPortfolio(transaction):
+		return True
+	else:
+		return False
+
+
+
+def isTrade(transaction):
+	""" tell whether a transaction node is a trade """
+	if transaction.tag in ['Buy_New', 'Sell_New', 'SellShort_New', 'CoverShort_New']:
+		return True
+	else:
+		return False
+
+
+
+def isDeletion(transaction):
+	""" tell whether a transaction node is a trade deletion """
+	if transaction.tag in ['Buy_Delete', 'Sell_Delete', 'SellShort_Delete', 'CoverShort_Delete']:
+		return True
+	else:
+		return False
+
+
+
 def filterTrades(lines):
 	"""
 	[List] lines => A tuple consisting of the below:
@@ -148,36 +175,9 @@ def filterTrades(lines):
 
 	Where "XXX" is the trade type, such as "Sell", "CoverShort", etc.
 	"""
-	def isTrade(transaction):
-		""" tell whether a transaction node is a trade of portfolio 40006 """
-		# if transaction.tag in ['Buy_New', 'Sell_New', 'SellShort_New', \
-		# 	'CoverShort_New'] and transaction.find('Portfolio') and \
-		# 	isRightPortfolio(transaction.find('Portfolio').text):
-		if transaction.tag in ['Buy_New', 'Sell_New', 'SellShort_New', \
-			'CoverShort_New'] and isRightPortfolio(transaction):
-			return True
-		else:
-			return False
-
-
-	def isDeletion(transaction):
-		""" tell whether a transaction node is a trade deletion """
-		if transaction.tag in ['Buy_Delete', 'Sell_Delete', 'SellShort_Delete', 'CoverShort_Delete']:
-			return True
-		else:
-			return False
-
-
-	root = ET.fromstringlist(lines)
-	# for transaction in root:
-	# 	print(transaction.tag)
-
-	# filter(tradeTransferred, filter(trade, ...))
-	# filter(deletionTransferred, filter(deletion, ...))
-
 	def buildResult(result, transaction):
 		newRoot, tradeKeys, deletionKeys = result
-		if isTrade(transaction) and not tradeInDB(transaction.tag):
+		if isRightTrade(transaction) and not tradeInDB(transaction.tag):
 			newRoot.append(transaction)
 			tradeKeys.append(transaction.find('KeyValue').text)
 		elif isDeletion(transaction) and not deletionInDB(transaction.tag) \
@@ -188,25 +188,30 @@ def filterTrades(lines):
 		return (newRoot, tradeKeys, deletionKeys)
 
 
-	return reduce(buildResult, root, (ET.Element('TransactionRecords'), [], []))
+	return reduce(buildResult
+				  , ET.fromstringlist(lines)
+				  , (ET.Element('TransactionRecords'), [], []))
+# end of filterTrades()
 
 
 
-def inverseFilterTrades(lines):
+def filterOtherTrades(lines):
 	"""
 	[List] lines => [bytes] XML content (string encoded with utf-8)
 
 	It's the opposite of filterTrades(), it keeps out those trades with the
 	right portfolio id, the rest will be 
 	"""
-	root = ET.fromstringlist(lines)
-	newRoot = ET.Element('TransactionRecords')
-	for transaction in root:
-		portfolio = transaction.find('Portfolio')
-		if portfolio == None or not isRightPortfolio(portfolio.text):
-			newRoot.append(transaction)
+	# def buildResult(newRoot, transaction):
+	pass
 
-	return ET.tostring(newRoot, encoding='utf-8', method='xml', short_empty_elements=True)
+
+
+
+
+	# return reduce(buildResult
+	# 			  , ET.fromstringlist(lines)
+	# 			  , ET.Element('TransactionRecords'))
 
 
 
