@@ -200,32 +200,19 @@ def filterTrades(lines):
 
 	def buildResult(result, transaction):
 		newRoot, tradeKeys, deletionKeys = result
-		print(transaction.tag)
 		if isTrade(transaction) and not tradeInDB(transaction.tag):
 			newRoot.append(transaction)
 			tradeKeys.append(transaction.find('KeyValue').text)
 		elif isDeletion(transaction) and not deletionInDB(transaction.tag) \
-			and forPreviousTrades(tradeKeys, transaction.tag):
+			and forPreviousTrades(tradeKeys, transaction):
 			newRoot.append(transaction)
 			deletionKeys.append(transaction.find('KeyValue').text)
 
+		# print (tradeKeys, deletionKeys)
 		return (newRoot, tradeKeys, deletionKeys)
 
 
 	return reduce(buildResult, root, (ET.Element('TransactionRecords'), [], []))
-
-
-
-def forPreviousTrades(tradeKeys, keyValue):
-	"""
-	[List] tradeKeys, [String] keyValue => [Bool] yesno
-
-	Determine whether a deletion keyValue is in tradeKeys or in database.
-	"""
-	if keyValue in tradeKeys or deletionInDB(keyValue):
-		return True
-	else:
-		return False
 
 
 
@@ -262,24 +249,11 @@ def writeXMLFile(content, filename='output.xml'):
 
 
 
-# def isRightPortfolio(portId):
-# 	"""
-# 	[String] portId => [Bool] yesno
-
-# 	Determine whether the portfolio id is of interest.
-# 	"""
-# 	if portId.startswith(get_portfolio_id()):
-# 		return True
-# 	else:
-# 		return False
-
-
-
-def isRightPortfolio(node):
+def isRightPortfolio(transaction):
 	"""
-	[ET node] node => [Bool] yesno
+	[ET node] transaction => [Bool] yesno
 
-	the node looks like follows:
+	the transaction looks like follows:
 
 	<SellShort_New>
 		<Portfolio>40006-C</Portfolio>
@@ -288,8 +262,28 @@ def isRightPortfolio(node):
 
 	We need to find out whether the "Portfolio" matches what we look for.
 	"""
-	portfolio = node.find('Portfolio')
+	portfolio = transaction.find('Portfolio')
 	if portfolio != None and portfolio.text.startswith(get_portfolio_id()):
+		return True
+	else:
+		return False
+
+
+
+def forPreviousTrades(tradeKeys, transaction):
+	"""
+	[List] tradeKeys, [ET node] transaction => [Bool] yesno
+
+	the transaction looks like follows:
+
+	<SellShort_Delete>
+		<KeyValue>123235</KeyValue>
+	</SellShort_Delete>
+
+	Determine whether the transaction's keyValue is in tradeKeys or in database.
+	"""
+	keyValue = transaction.find('KeyValue')
+	if keyValue != None and (keyValue.text in tradeKeys or deletionInDB(keyValue.text)):
 		return True
 	else:
 		return False
