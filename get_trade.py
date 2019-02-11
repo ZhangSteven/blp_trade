@@ -55,13 +55,19 @@ if __name__ == '__main__':
 
 		python get_trade.py --file <file>
 
-		NOTE: no database involvement in this mode
+		NOTE: no database involvement in this mode and no upload will happen
 
 	To run it in production mode, do
 
 		python get_trade.py --mode production
 
-	It will retrieve file based on today's date and do ftp upload.
+	It will retrieve file based on today's date, save to database and do sftp 
+	upload.
+
+	In some rare cases, where we want to extract the trades and save to
+	databases, but do NOT want to upload, then we do
+
+		python get_trade.py --mode production --noupload
 
 	In either case, the output trade file will be stored in the 'upload'
 	folder.
@@ -73,7 +79,10 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--file', nargs='?', metavar='input file', type=str)
 	parser.add_argument('--mode', nargs='?', metavar='mode', default='test')
+	parser.add_argument('--noupload', nargs='?', metavar='whether to upload' \
+						, const='Yes', default='No')
 	args = parser.parse_args()
+	# print(args.noupload)
 
 	setDatabaseMode(args.mode)
 	if args.mode == 'production':
@@ -85,7 +94,7 @@ if __name__ == '__main__':
 	try:
 		outputFile = outputFile()
 		extractTradesToXML(inputFile, outputFile)
-		if args.mode == 'production':
+		if args.mode == 'production' and args.noupload != 'Yes':
 			doUpload(outputFile)
 
 	except:
