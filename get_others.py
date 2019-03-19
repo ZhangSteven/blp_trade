@@ -12,12 +12,20 @@ logger = logging.getLogger(__name__)
 
 
 
+# def inputFile():
+# 	"""
+# 	The Bloomberg XML file name
+# 	"""
+# 	return join(get_input_directory(), 'SENT',
+# 				'TransToGeneva' + getDateString() + '.xml')
+
+
+
 def inputFile():
 	"""
-	The Bloomberg XML file name
+	A quick hack to be discarded later.
 	"""
-	return join(get_input_directory(), 'SENT',
-				'TransToGeneva' + getDateString() + '.xml')
+	return join(get_input_directory(), 'SENT', 'TransToGeneva20190318.xml')
 
 
 
