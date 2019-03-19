@@ -12,29 +12,12 @@ logger = logging.getLogger(__name__)
 
 
 
-# def inputFile():
-# 	"""
-# 	The Bloomberg XML file name
-# 	"""
-# 	return join(get_input_directory(), 'SENT',
-# 				'TransToGeneva' + getDateString() + '.xml')
-
-
-
 def inputFile():
 	"""
-	A quick hack to be discarded later.
+	The Bloomberg XML file name
 	"""
-	return join(get_input_directory(), 'SENT', 'TransToGeneva20190318.xml')
-
-
-
-# def outputFile():
-# 	"""
-# 	The resulting XML file after trade extraction.
-# 	"""
-# 	return join(get_current_path(), 'uploads', 
-# 				'BlpOthers' + getDateString() + '.xml')
+	return join(get_input_directory(), 'SENT',
+				'TransToGeneva' + getDateString() + '.xml')
 
 
 
@@ -42,7 +25,8 @@ def outputFile():
 	"""
 	The resulting XML file after trade extraction.
 	"""
-	return join(get_current_path(), 'uploads', 'BlpOthers20190318.xml')
+	return join(get_current_path(), 'uploads', 
+				'BlpOthers' + getDateString() + '.xml')
 
 
 
