@@ -29,13 +29,20 @@ def inputFile():
 
 
 
+# def outputFile():
+# 	"""
+# 	The resulting XML file after trade extraction.
+# 	"""
+# 	return join(get_current_path(), 'uploads', 
+# 				'BlpOthers' + getDateString() + '.xml')
+
+
+
 def outputFile():
 	"""
 	The resulting XML file after trade extraction.
 	"""
-	return join(get_current_path(), 'uploads', 
-				'BlpOthers' + getDateString() + '.xml')
-
+	return join(get_current_path(), 'uploads', 'BlpOthers20190318.xml')
 
 
 
