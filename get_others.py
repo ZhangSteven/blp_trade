@@ -45,14 +45,12 @@ def sendNotification(result, outputFile=None):
     The function send a notification email about the conversion result.
     """
     if result == SUCCESS:
-        emailBody = 'Trade file {0} uploaded to Geneva'.format(outputFile)
-        emailSubject = 'Bloomberg AIM trade file uploaded to Geneva'
+        emailSubject = 'Bloomberg AIM trade file {0} uploaded to Geneva'.format(outputFile)
     else:
-        emailBody = ''
         emailSubject = 'Error occurred on flowing Bloomberg AIM trades to Geneva'
 
 
-    sendMail( emailBody
+    sendMail( ''
             , emailSubject
             , getMailSender()
             , getMailRecipients()
