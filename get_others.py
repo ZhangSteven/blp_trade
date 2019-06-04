@@ -114,14 +114,14 @@ if __name__ == '__main__':
 		# Only do upload when it's in auto mode
 		if args.mode == 'production' and args.file == None:
 			doUpload(outputFile)
-            sendNotification(SUCCESS, outputFile)
+			sendNotification(SUCCESS, outputFile)
 
 	except:
 		logger.exception('Error')
 
-        # only send notification email on error if it is in auto mode
-        if args.mode == 'production' and args.file == None:
-            sendNotification(ERROR)
+		# only send notification email on error if it is in auto mode
+		if args.mode == 'production' and args.file == None:
+			sendNotification(ERROR)
 
 	finally:
 		closeConnection()
